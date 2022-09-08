@@ -1,17 +1,11 @@
 import React from 'react'
-import { useGetCartQuery } from '../../../store/slices/cartApiSlice'
+import { useGetCardCartsQuery } from '../../../store/slices/cartApiSlice'
 import * as S from './style'
 
 function Badge() {
-  const { data: carts } = useGetCartQuery()
+  const { data: cards, isLoading, isError } = useGetCardCartsQuery()
 
-  return (
-    <S.Badge>
-      {(
-        (carts?.cardList.length ?? 0) + (carts?.loanList.length ?? 0)
-      ).toString()}
-    </S.Badge>
-  )
+  return <S.Badge>{(cards?.cardList?.length ?? 0).toString()}</S.Badge>
 }
 
 export default Badge

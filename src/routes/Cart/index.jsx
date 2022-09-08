@@ -1,14 +1,18 @@
 import React, { useState } from 'react'
-import { useGetCartQuery } from '../../store/slices/cartApiSlice'
+import { useGetCardCartsQuery } from '../../store/slices/cartApiSlice'
 import { useCreateOrderMutation } from '../../store/slices/orderApiSlice'
 import Card from '../../components/common/Card'
-import Loan from '../../components/common/Loan'
 import Loader from '../../components/layout/Loader'
 import Button from '../../components/common/Button'
 import * as S from './style'
 
 function Cart() {
-  const { data: carts, isLoading, isError } = useGetCartQuery()
+  const {
+    data: cards,
+    isLoading: cardLoding,
+    isError: cardError,
+  } = useGetCardCartsQuery()
+
   const arr = []
   const [createOrder] = useCreateOrderMutation()
   const checkedHandler = (e, id) => {
@@ -18,30 +22,27 @@ function Cart() {
   }
 
   const createOrderHandler = () => {
-    createOrder(arr)
+    //
   }
 
-  if (isLoading) {
-    return (
-      <div>
-        <Loader />
-      </div>
-    )
+  if (cardLoding) {
+    return <Loader />
   }
 
-  if (isError || !carts) {
+  if (cardError || !cards) {
     return <div>오류발생!</div>
   }
 
   return (
     <div>
       <S.Title>
-        <span>{carts.name}님</span>의 장바구니
+        장바구니 속에 <span>{(cards?.cardList?.length ?? 0).toString()}개</span>
+        의 상품이 있어요.
       </S.Title>
 
       <div>
         <S.CardContainer>
-          {carts.cardList.map((item) => (
+          {cards?.cardList?.map((item) => (
             <S.Container key={item.cardId}>
               <S.CardCheckInput type="checkbox" id={`card-${item.cardId}`} />
               <S.CardLabel
@@ -54,24 +55,12 @@ function Cart() {
             </S.Container>
           ))}
         </S.CardContainer>
-        <S.CardContainer>
-          {carts.loanList.map((item) => (
-            <S.Container key={item.loanId}>
-              <S.CardCheckInput type="checkbox" id={`loan-${item.loanId}`} />
-              <S.CardLabel
-                htmlFor={`loan-${item.loanId}`}
-                onClick={(e) => checkedHandler(e, `loadId: ${item.loanId}`)}
-              >
-                <S.CardCheckBox />
-              </S.CardLabel>
-              <Loan item={item} />
-            </S.Container>
-          ))}
-        </S.CardContainer>
       </div>
-      <Button width="100%" height="5.2rem" onClick={createOrderHandler}>
-        장바구니 신청
-      </Button>
+      {cards?.cardList?.length && (
+        <Button width="100%" height="5.2rem" onClick={createOrderHandler}>
+          신청하기
+        </Button>
+      )}
     </div>
   )
 }
