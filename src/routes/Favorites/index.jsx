@@ -1,17 +1,29 @@
 import Loader from '../../components/layout/Loader'
 import Card from '../../components/common/Card'
 import Loan from '../../components/common/Loan'
-import { useGetFavoritesQuery } from '../../store/slices/favoriteApiSlice'
+import {
+  useGetCardFavoritesQuery,
+  useGetLoanFavoritesQuery,
+} from '../../store/slices/favoriteApiSlice'
 import * as S from './style'
 
 function Favorites() {
-  const { data: items, isLoading, isError } = useGetFavoritesQuery()
+  const {
+    data: cards,
+    isLoading: cardLoding,
+    isError: cardError,
+  } = useGetCardFavoritesQuery()
+  const {
+    data: loans,
+    isLoading: loanLoding,
+    isError: loanError,
+  } = useGetLoanFavoritesQuery()
 
-  if (isLoading) {
+  if (cardLoding || loanLoding) {
     return <Loader />
   }
 
-  if (isError || !items) {
+  if (cardError || loanError || !cards || !loans) {
     return <div>오류발생!</div>
   }
 
@@ -19,15 +31,19 @@ function Favorites() {
     <>
       <S.Title>
         <p>
-          <span>{items?.cardList.length + items?.loanList.length}</span>
+          <span>
+            {(
+              (cards?.cardList?.length ?? 0) + (loans?.loanList?.length ?? 0)
+            ).toString()}
+          </span>
           개의 관심리스트가
         </p>
         <p>있습니다.</p>
       </S.Title>
-      {items.loanList.map((item) => (
+      {loans?.loanList?.map((item) => (
         <Loan item={item} key={item.loanId} />
       ))}
-      {items.cardList.map((item) => (
+      {cards?.cardList?.map((item) => (
         <Card item={item} key={item.cardId} />
       ))}
     </>

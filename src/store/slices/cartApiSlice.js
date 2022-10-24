@@ -1,6 +1,5 @@
 //장바구니 조회, 추가, 취소
-const { VITE_BASE_URL } = import.meta.env
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQuery } from '../apis/baseQuery'
 
 export const cartApi = createApi({
@@ -8,32 +7,21 @@ export const cartApi = createApi({
   baseQuery,
   endpoints: (builder) => ({
     //카드 상품 불러오기
-    getCart: builder.query({
-      query: () => 'carts',
+    getCardCarts: builder.query({
+      query: () => 'carts/card',
     }),
     addCardToCart: builder.mutation({
-      query: ({ data }) => ({
-        url: 'carts/card',
-        method: 'POST',
-        body: data,
-      }),
+      query: ({ data }) => {
+        return {
+          url: 'carts/card',
+          method: 'POST',
+          body: { card_id: data },
+        }
+      },
     }),
-    addLoanToCart: builder.mutation({
-      query: ({ data }) => ({
-        url: 'carts/loan',
-        method: 'POST',
-        body: data,
-      }),
-    }),
-    deleteCardInCart: builder.query({
+    deleteCardInCart: builder.mutation({
       query: (id) => ({
         url: `carts/card/${id}`,
-        method: 'DELETE',
-      }),
-    }),
-    deleteLoanInCart: builder.query({
-      query: (id) => ({
-        url: `carts/loan/${id}`,
         method: 'DELETE',
       }),
     }),
@@ -41,9 +29,7 @@ export const cartApi = createApi({
 })
 
 export const {
-  useGetCartQuery,
+  useGetCardCartsQuery,
   useAddCardToCartMutation,
-  useAddLoanToCartMutation,
-  useDeleteCardInCartQuery,
-  useDeleteLoanInCartQuery,
+  useDeleteCardInCartMutation,
 } = cartApi

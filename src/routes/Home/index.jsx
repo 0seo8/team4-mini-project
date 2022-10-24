@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import LoanInfo from '../../components/template/LoanInfo'
 import { useNavigate } from 'react-router-dom'
 import * as S from './style'
 import { BsSearch } from 'react-icons/bs'
@@ -26,6 +26,7 @@ function Home() {
       <S.SearchBox onClick={() => navigate('/search')}>
         <BsSearch size="2.5rem" />
       </S.SearchBox>
+      <LoanInfo />
       <Filter onFilterHandler={setIsActive} item={isActive} />
       <IfTab tab={isActive} items={products} />
     </>
